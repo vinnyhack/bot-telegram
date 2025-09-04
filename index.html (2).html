@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Acesso Direto ao Bot</title>
+  <meta name="format-detection" content="telephone=no" />
+  <style>
+    :root {
+      --bg: #0b0b10;
+      --card: #12121a;
+      --txt: #f6f7fb;
+      --muted:#9aa1b2;
+      --accent: #2dd4bf;
+      --accent-2: #22c55e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 10% 10%, #0f172a 0%, var(--bg) 40%),
+                  radial-gradient(900px 700px at 90% 20%, #052e2b 0%, var(--bg) 35%);
+      color: var(--txt);
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .wrap {
+      width: 100%;
+      max-width: 560px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+      backdrop-filter: blur(8px);
+      padding: 28px 24px 24px;
+      text-align: center;
+    }
+    h1 {
+      font-size: clamp(20px, 3vw, 26px);
+      line-height: 1.25;
+      margin: 0 0 16px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+    }
+    p { color: var(--muted); margin: 0 0 20px; font-size: 14px; }
+    .btn {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      width: 100%;
+      border-radius: 16px;
+      padding: 16px 20px;
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: 0.5px;
+      transition: transform .06s ease, box-shadow .2s ease;
+      color: #0b0b10;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      box-shadow: 0 10px 30px rgba(34,197,94,.35);
+    }
+    .btn:active { transform: translateY(1px); }
+    .hint { font-size: 12px; color: var(--muted); margin-top: 14px; }
+    .hide { display: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>OII AMOR CLICA NO BOTÃO ABAIXO PRA VIM ACESSAR O QUE GRAVEI👇😊</h1>
+    <p>Ao tocar, vamos tentar abrir direto no aplicativo do Telegram.</p>
+    <button id="openBtn" class="btn">CLICA AQUI</button>
+    <p id="fallbackMsg" class="hint hide">Se nada acontecer, <a id="fallbackLink" href="https://t.me/anevips_bot">toque aqui</a> para abrir pelo navegador.</p>
+  </div>
+
+  <script>
+    (function(){
+      const TG_USERNAME = "anevips_bot";
+      const links = {
+        tg: `tg://resolve?domain=${TG_USERNAME}`,
+        https: `https://t.me/${TG_USERNAME}`,
+        androidIntent: `intent://resolve?domain=${TG_USERNAME}#Intent;scheme=tg;package=org.telegram.messenger;end`,
+      };
+
+      const ua = navigator.userAgent || navigator.vendor || window.opera;
+      const isAndroid = /Android/i.test(ua);
+      const isIOS = /iPhone|iPad|iPod/i.test(ua);
+
+      const btn = document.getElementById('openBtn');
+      const fallbackMsg = document.getElementById('fallbackMsg');
+      const fallbackLink = document.getElementById('fallbackLink');
+
+      function openTelegram() {
+        let triedDeep = false;
+        const start = Date.now();
+
+        const timer = setTimeout(function(){
+          if (!triedDeep || Date.now() - start < 1200) {
+            window.location.href = links.https;
+            fallbackMsg.classList.remove('hide');
+            fallbackLink.href = links.https;
+          }
+        }, 1000);
+
+        if (isAndroid) {
+          triedDeep = true;
+          window.location.href = links.androidIntent;
+          return;
+        }
+
+        if (isIOS) {
+          triedDeep = true;
+          window.location.href = links.tg;
+          return;
+        }
+
+        window.location.href = links.https;
+      }
+
+      btn.addEventListener('click', openTelegram);
+    })();
+  </script>
+</body>
+</html>
